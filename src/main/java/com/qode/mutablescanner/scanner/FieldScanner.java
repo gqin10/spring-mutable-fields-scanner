@@ -1,5 +1,6 @@
 package com.qode.mutablescanner.scanner;
 
+import com.qode.mutablescanner.exception.MutableFieldNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class FieldScanner {
                 continue;
             }
 
-            throw new RuntimeException(String.format("field %s not allowed, reason [%s]", field.getName(), "field is a global variable"));
+            throw new MutableFieldNotAllowedException(String.format("field %s not allowed, reason [%s]", field.getName(), "field is a global variable"));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.qode.mutablescanner.scanner;
 
+import com.qode.mutablescanner.annotation.AllowMutable;
 import com.qode.mutablescanner.exception.MutableFieldNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,9 @@ public class FieldScanner {
 
     private static final List<Class<?>> ALLOWED_ANNOTATIONS = Arrays.asList(
             Autowired.class,
-            Value.class
+            Value.class,
+
+            AllowMutable.class
     );
 
     public static void scan(Class<?> clazz, ConfigurableListableBeanFactory beanFactory) {

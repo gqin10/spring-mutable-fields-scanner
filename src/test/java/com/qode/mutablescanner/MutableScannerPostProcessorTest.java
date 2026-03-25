@@ -1,27 +1,24 @@
 package com.qode.mutablescanner;
 
-import com.qode.mutablescanner.service.IUserService;
+import com.qode.mutablescanner.exception.MutableFieldNotAllowedException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        TestConfig.class
-})
 public class MutableScannerPostProcessorTest {
 
-    @Autowired
-    private ApplicationContext appContext;
-
-    @Autowired
-    private IUserService userService;
+    @Test
+    public void expectSuccess() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+    }
 
     @Test
-    public void successTest() {
-        // prepare context no error
+    public void expectFail() {
+        try {
+            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestFailCaseConfig.class);
+        } catch (Exception e) {
+            Assertions.assertEquals(MutableFieldNotAllowedException.class, e.getCause().getClass());
+        }
     }
+
 }

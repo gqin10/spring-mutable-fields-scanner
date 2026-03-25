@@ -6,6 +6,7 @@ import com.qode.mutablescanner.config.ExpectSuccessConfig;
 import com.qode.mutablescanner.config.HasMutableExpectFailConfig;
 import com.qode.mutablescanner.exception.MutableFieldNotAllowedException;
 import com.qode.mutablescanner.service.impl.ChildServiceB;
+import com.qode.mutablescanner.service.impl.HasAllowMutableFieldService;
 import com.qode.mutablescanner.service.noscanimpl.NoScanService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,18 @@ public class MutableScannerPostProcessorTest {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanOutsideScanPackageExpectSuccessConfig.class);
         context.scan(AbstractTestConfig.IMPL_PACKAGES); // does not scan noscanimpl
         Assertions.assertNotNull(context.getBean(MutableScannerPostProcessor.class));
+    }
+
+    @Test
+    public void testAllowMutableAnnotation_expectSuccess() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ExpectSuccessConfig.class);
+        context.scan(AbstractTestConfig.IMPL_PACKAGES);
+        Assertions.assertEquals(0, context.getBeansOfType(NoScanService.class).size());
+
+        HasAllowMutableFieldService hasMutableService = context.getBean(HasAllowMutableFieldService.class);
+        Assertions.assertEquals(HasAllowMutableFieldService.DEFAULT_VALUE, hasMutableService.getAllowMutableValue());
+        hasMutableService.setAllowMutableValue("newValue");
+        Assertions.assertEquals("newValue", hasMutableService.getAllowMutableValue());
     }
 
 }

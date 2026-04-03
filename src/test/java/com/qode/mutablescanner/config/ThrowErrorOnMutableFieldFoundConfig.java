@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:enableContinueOnMutableField.properties")
-public class ContinueOnMutableFieldFoundConfig extends HasMutableExpectFailConfig {
+@PropertySource("classpath:throwErrorOnMutableField.properties")
+public class ThrowErrorOnMutableFieldFoundConfig extends HasMutableExpectFailConfig {
 
 }

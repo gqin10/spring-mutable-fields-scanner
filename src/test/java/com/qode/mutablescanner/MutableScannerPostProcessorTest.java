@@ -2,10 +2,10 @@ package com.qode.mutablescanner;
 
 import com.qode.mutablescanner.config.*;
 import com.qode.mutablescanner.exception.MutableFieldNotAllowedException;
+import com.qode.mutablescanner.service.impl.ChildServiceA;
 import com.qode.mutablescanner.service.impl.ChildServiceB;
 import com.qode.mutablescanner.service.impl.HasAllowMutableFieldService;
 import com.qode.mutablescanner.service.mutableimpl.ScanHasMutableService;
-import com.qode.mutablescanner.service.noscanimpl.HasMutableService;
 import com.qode.mutablescanner.service.noscanimpl.NoScanService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ public class MutableScannerPostProcessorTest {
         context.scan(AbstractTestConfig.IMPL_PACKAGES);
         Assertions.assertNotNull(context.getBean(MutableScannerPostProcessor.class));
         Assertions.assertNotNull(context.getBean(ChildServiceB.class));
+        Assertions.assertNotNull(context.getBean(ChildServiceA.class));
     }
 
     @Test
@@ -71,6 +72,35 @@ public class MutableScannerPostProcessorTest {
         Assertions.assertEquals(HasAllowMutableFieldService.DEFAULT_VALUE, hasMutableService.getAllowMutableValue());
         hasMutableService.setAllowMutableValue("newValue");
         Assertions.assertEquals("newValue", hasMutableService.getAllowMutableValue());
+    }
+
+    @Test
+    public void testContinueOnMutableFieldFoundConfig_expectNoError() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ContinueOnMutableFieldFoundConfig.class);
+        context.scan(AbstractTestConfig.IMPL_PACKAGES, AbstractTestConfig.NOSCAN_PACKAGES, AbstractTestConfig.SCAN_MUTABLE_PACKAGES);
+        MutableScannerPostProcessor postProcessor = context.getBean(MutableScannerPostProcessor.class);
+        Assertions.assertNotNull(postProcessor);
+        Assertions.assertNotNull(context.getBean(ScanHasMutableService.class));
+        Assertions.assertEquals(1, postProcessor.getBeanMutableFieldMap().size());
+        Assertions.assertNotNull(postProcessor.getBeanMutableFieldMap().get("scanHasMutableService"));
+        Assertions.assertEquals("notAllowedMutableField", postProcessor.getBeanMutableFieldMap().get("scanHasMutableService").get(0));
+    }
+
+    @Test
+    public void testConfigureNotContinueOnMutableFieldFound_expectException() {
+        Exception exception = null;
+        try {
+            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(HasMutableExpectFailConfig.class);
+            context.scan(AbstractTestConfig.IMPL_PACKAGES, AbstractTestConfig.NOSCAN_PACKAGES, AbstractTestConfig.SCAN_MUTABLE_PACKAGES);
+            Assertions.assertNotNull(context.getBean(MutableScannerPostProcessor.class));
+            ScanHasMutableService scanHasMutableService = context.getBean(ScanHasMutableService.class);
+        } catch (Exception e) {
+            exception = e;
+            Assertions.assertEquals(MutableFieldNotAllowedException.class, e.getCause().getClass());
+        }
+        if (exception == null) {
+            Assertions.fail("No MutableFieldNotAllowedException thrown");
+        }
     }
 
 }

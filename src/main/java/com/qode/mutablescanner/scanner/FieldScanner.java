@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,8 +26,9 @@ public class FieldScanner {
             AllowMutable.class
     );
 
-    public static void scan(Class<?> clazz, ConfigurableListableBeanFactory beanFactory) {
+    public static List<String> scan(Class<?> clazz, ConfigurableListableBeanFactory beanFactory) {
         Field[] fields = clazz.getDeclaredFields();
+        List<String> mutableFields = new ArrayList<>();
 
         for (Field field : fields) {
             boolean isSingletonBean = isSingletonBean(field, beanFactory);
@@ -37,8 +39,9 @@ public class FieldScanner {
                 continue;
             }
 
-            throw new MutableFieldNotAllowedException(String.format("field %s not allowed, reason [%s]", field.getName(), "field is a global variable"));
+            mutableFields.add(field.getName());
         }
+        return mutableFields;
     }
 
     private static boolean isAllowedModifier(Field field) {

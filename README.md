@@ -15,6 +15,14 @@ The scanner inspector checks all singleton beans residing in your configured bas
 
 If a field does not meet any of these rules, the scanner will halt the application startup securely and throw a `MutableFieldNotAllowedException`.
 
+## Configuration
+
+You can customize the scanner's behavior using properties (e.g., in `application.properties`):
+
+| Property | Behavior |
+| :--- | :--- |
+| `mutableScanner.isContinueOnMutableFieldFound` | **N** (Default): Throws a `MutableFieldNotAllowedException` and halts startup when a mutable field is found. <br/><br/> **Y**: Logs a warning instead of throwing an exception, allowing the application to continue. The mutable fields and their associated beans are recorded and can be retrieved from the `MutableScannerPostProcessor` using `getBeanMutableFieldMap()`. |
+
 ## Setup
 
 1. Add the project to your build system's dependencies (e.g., Gradle or Maven).

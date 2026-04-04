@@ -22,6 +22,9 @@ You can customize the scanner's behavior using properties (e.g., in `application
 | Property | Behavior |
 | :--- | :--- |
 | `mutableScanner.isContinueOnMutableFieldFound` | **N** (Default): Throws a `MutableFieldNotAllowedException` and halts startup when a mutable field is found. <br/><br/> **Y**: Logs a warning instead of throwing an exception, allowing the application to continue. The mutable fields and their associated beans are recorded and can be retrieved from the `MutableScannerPostProcessor` using `getBeanMutableFieldMap()`. |
+| `mutableScanner.outputPath` | Specifies the file path where the detected mutable fields will be written. If not provided, it defaults to `mutableFields.txt` in the current working directory. |
+
+Please follow `src/test/resources/template.properties` for reference.
 
 ## Setup
 
